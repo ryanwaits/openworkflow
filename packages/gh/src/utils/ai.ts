@@ -24,7 +24,7 @@ Description: ${pr.body ? pr.body.substring(0, 200) + (pr.body.length > 200 ? '..
 
 Based on the following merged PRs, create release notes following these STRICT rules:
 
-1. Start with "# Release ${version}" as the title
+1. DO NOT include a title header - start directly with the sections
 2. Group changes ONLY into these sections (use emoji headers):
    - ## ✨ Features
    - ## 🪲 Bug Fixes

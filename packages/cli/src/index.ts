@@ -2,7 +2,7 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { releaseCommand, prCommand } from '@openworkflow/gh';
+import { releaseCommand, prCommand, publishCommand } from '@openworkflow/gh';
 
 const program = new Command();
 
@@ -18,6 +18,7 @@ const gh = new Command('gh')
 
 gh.addCommand(releaseCommand);
 gh.addCommand(prCommand);
+gh.addCommand(publishCommand);
 
 program.addCommand(gh);
 

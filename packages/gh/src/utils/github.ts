@@ -33,7 +33,7 @@ export async function createGitHubRelease(
 ): Promise<string> {
   try {
     const draftFlag = draft ? '--draft' : '';
-    const result = await $`gh release create ${version} --title "Release ${version}" --notes "${notes}" ${draftFlag} --target ${targetBranch}`.text();
+    const result = await $`gh release create ${version} --title "${version}" --notes "${notes}" ${draftFlag} --target ${targetBranch}`.text();
     return result;
   } catch (error) {
     console.error('Error creating GitHub release:', error);
