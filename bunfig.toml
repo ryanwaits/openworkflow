@@ -1,0 +1,8 @@
+[install]
+production = false
+
+[install.scopes]
+"@openworkflow" = { token = "$npm_config_token" }
+
+[test]
+preload = ["./test/setup.ts"]

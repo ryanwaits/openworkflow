@@ -1,0 +1,212 @@
+{
+  "release": {
+    "structure": {
+      "sections": [
+        {
+          "emoji": "✨",
+          "title": "Features",
+          "keywords": ["feat", "feature", "add", "new", "implement", "introduce"],
+          "priority": 1
+        },
+        {
+          "emoji": "🪲",
+          "title": "Bug Fixes", 
+          "keywords": ["fix", "bug", "resolve", "patch", "correct", "repair"],
+          "priority": 2
+        },
+        {
+          "emoji": "⚡",
+          "title": "Performance",
+          "keywords": ["perf", "performance", "optimize", "speed", "improve", "faster"],
+          "priority": 3
+        },
+        {
+          "emoji": "🔁",
+          "title": "Refactor",
+          "keywords": ["refactor", "restructure", "cleanup", "reorganize"],
+          "priority": 4
+        },
+        {
+          "emoji": "🧹",
+          "title": "Chores",
+          "keywords": ["chore", "maintenance", "deps", "dependencies", "update"],
+          "priority": 5
+        },
+        {
+          "emoji": "📚",
+          "title": "Documentation",
+          "keywords": ["docs", "documentation", "readme", "comment"],
+          "priority": 6
+        },
+        {
+          "emoji": "🔧",
+          "title": "CI/CD",
+          "keywords": ["ci", "cd", "pipeline", "workflow", "action", "build"],
+          "priority": 7
+        }
+      ],
+      "includeContributors": true,
+      "includeCommitHash": true,
+      "groupByType": true
+    },
+    "style": {
+      "versionFormat": "vX.Y.Z",
+      "commitFormat": "title-pr-hash",
+      "prReferenceFormat": "(#123)",
+      "listStyle": "bullet",
+      "headerLevel": 2
+    },
+    "tone": {
+      "formality": "technical",
+      "detail": "moderate",
+      "highlightSection": "Features"
+    },
+    "examples": {
+      "commitLine": "Add --create-global-snapshot flag (#1904) (d730cc1)",
+      "sectionHeader": "✨ Features",
+      "versionHeader": "v3.3.0"
+    }
+  },
+  "releasePR": {
+    "structure": {
+      "sections": [
+        {
+          "title": "Bug Fixes",
+          "keywords": ["fix", "bug", "resolve", "patch", "correct"],
+          "priority": 1
+        },
+        {
+          "title": "Features",
+          "keywords": ["feat", "feature", "add", "new", "implement"],
+          "priority": 2
+        },
+        {
+          "title": "Documentation",
+          "keywords": ["docs", "documentation", "readme", "update docs"],
+          "priority": 3
+        },
+        {
+          "title": "Maintenance",
+          "keywords": ["chore", "maintenance", "deps", "refactor", "cleanup"],
+          "priority": 4
+        }
+      ],
+      "includeEmojis": false,
+      "includeVersion": false,
+      "includeCommitHash": true,
+      "includeContributors": true
+    },
+    "style": {
+      "titleFormat": "chore: release {version}",
+      "prFormat": "{title} (#{number}) ({hash})",
+      "listStyle": "dash",
+      "headerLevel": 0,
+      "topLevelHeader": false
+    },
+    "tone": {
+      "formality": "minimal",
+      "focusOn": "changes-only"
+    },
+    "examples": {
+      "title": "chore: release v3.0.1",
+      "prLine": "- Fixed parameter population from OpenAPI examples in API playground (#1031) (9f92f94)",
+      "section": "Bug Fixes"
+    }
+  },
+  "releaseNotes": {
+    "structure": {
+      "sections": [
+        {
+          "emoji": "✨",
+          "title": "Features",
+          "keywords": ["feat", "feature", "add", "new", "implement"],
+          "priority": 1
+        },
+        {
+          "emoji": "🪲",
+          "title": "Bug Fixes",
+          "keywords": ["fix", "bug", "resolve", "patch", "correct"],
+          "priority": 2
+        },
+        {
+          "emoji": "📚",
+          "title": "Documentation",
+          "keywords": ["docs", "documentation", "readme", "update docs"],
+          "priority": 3
+        },
+        {
+          "emoji": "🧹",
+          "title": "Maintenance",
+          "keywords": ["chore", "maintenance", "deps", "refactor", "cleanup"],
+          "priority": 4
+        }
+      ],
+      "includeCommitHash": true,
+      "includeContributors": true,
+      "excludeUpgradeNotes": true
+    },
+    "style": {
+      "prFormat": "title (#number) (hash)",
+      "listStyle": "dash",
+      "headerLevel": 2,
+      "versionInTitle": true
+    },
+    "tone": {
+      "formality": "professional",
+      "focusOn": "specific-changes",
+      "avoid": ["upgrade instructions", "breaking changes warnings", "general statements"]
+    },
+    "examples": {
+      "prLine": "Fixed parameter population from OpenAPI examples in API playground (#1031) (a69340b)",
+      "sectionHeader": "## 🪲 Bug Fixes",
+      "title": "# Release v3.1.0"
+    }
+  },
+  "pr": {
+    "standard": {
+      "structure": {
+        "titleFormat": "{type}: {summary}",
+        "types": ["chore", "feat", "fix", "docs", "refactor", "test", "style", "perf"],
+        "includeHeaders": false,
+        "maxSummaryItems": 5
+      },
+      "style": {
+        "listStyle": "bullet",
+        "maxTitleLength": 50,
+        "descriptionStyle": "brief",
+        "capitalizeTitle": false,
+        "punctuationInTitle": false
+      },
+      "tone": {
+        "formality": "casual",
+        "technicalLevel": "medium",
+        "voice": "active"
+      },
+      "examples": {
+        "title": "chore: update dependencies",
+        "description": "Updates project dependencies to latest versions\n• Bump typescript from 4.x to 5.x\n• Update eslint configuration"
+      }
+    },
+    "minimal": {
+      "structure": {
+        "titleFormat": "{type}: {summary}",
+        "types": ["chore", "feat", "fix"],
+        "includeHeaders": false,
+        "maxSummaryItems": 3
+      },
+      "style": {
+        "listStyle": "none",
+        "maxTitleLength": 60,
+        "descriptionStyle": "brief"
+      },
+      "tone": {
+        "formality": "casual",
+        "technicalLevel": "low"
+      },
+      "examples": {
+        "title": "fix: resolve build error",
+        "description": "Fixes TypeScript compilation error in build process"
+      }
+    }
+  }
+}
