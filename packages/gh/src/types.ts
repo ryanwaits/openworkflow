@@ -16,6 +16,9 @@ export interface PRDetails {
   deletions?: number;
   changedFiles?: number;
   mergeCommitSha?: string;
+  baseRefName?: string;
+  state?: string;
+  mergedAt?: string;
 }
 
 export interface CommitInfo {

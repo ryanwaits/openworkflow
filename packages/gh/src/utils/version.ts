@@ -45,33 +45,40 @@ export function bumpVersion(current: Version, bumpType: 'major' | 'minor' | 'pat
 }
 
 export async function getLatestVersion(): Promise<Version | null> {
+  // First check GitHub releases (includes drafts and published)
   try {
-    // Get all tags and sort them by semantic version
+    const releases = await $`gh release list --limit 10 --json tagName,isDraft,isPrerelease`.text();
+    const releaseData = JSON.parse(releases);
+    
+    // Find the latest non-prerelease version (draft or published)
+    for (const release of releaseData) {
+      if (!release.isPrerelease) {
+        const version = parseVersion(release.tagName);
+        if (version) {
+          console.log(`Latest version: ${release.tagName}`);
+          return version;
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching GitHub releases:', error);
+  }
+  
+  // Fallback to git tags if no releases found
+  try {
     const allTags = await $`git tag --list "v*.*.*" --sort=-version:refname`.text();
     const tags = allTags.trim().split('\n').filter(Boolean);
     
     if (tags.length > 0) {
       const latestTag = tags[0];
       const version = parseVersion(latestTag);
-      console.log(`Latest version: ${latestTag}`);
+      console.log(`Latest version (from tags): ${latestTag}`);
       return version;
     }
   } catch (error) {
     console.error('Error fetching git tags:', error);
   }
   
-  // Fallback to GitHub releases
-  try {
-    const releases = await $`gh release list --limit 1 --json tagName`.text();
-    const releaseData = JSON.parse(releases);
-    if (releaseData.length > 0) {
-      const version = parseVersion(releaseData[0].tagName);
-      console.log(`Latest version (from GitHub): ${releaseData[0].tagName}`);
-      return version;
-    }
-  } catch (e) {
-    console.log('No previous releases found, starting from v0.0.0');
-  }
-  
+  console.log('No previous releases found, starting from v0.0.0');
   return null;
 }

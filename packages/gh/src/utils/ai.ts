@@ -46,7 +46,6 @@ Remember: Keep descriptions specific and concise. Reference format must be (#num
     const { text } = await generateText({
       model: anthropic(model),
       prompt,
-      maxTokens: 2000,
       maxRetries: 5,
       abortSignal: AbortSignal.timeout(30000), // 30 second timeout
     });
@@ -122,7 +121,6 @@ Example with bullets:
     const { text } = await generateText({
       model: anthropic(model),
       prompt,
-      maxTokens: 2000,
       maxRetries: 5,
       abortSignal: AbortSignal.timeout(30000), // 30 second timeout
     });
@@ -162,25 +160,28 @@ Description: ${pr.body ? pr.body.substring(0, 200) + (pr.body.length > 200 ? '..
 
 Based on the following merged PRs, create a SIMPLE release PR description following these STRICT rules:
 
-1. NO title or version header
-2. For each PR, format EXACTLY as: "- {description} (#{number}) ({hash})"
-   Example: "- Fixed parameter population from OpenAPI examples in API playground (#1031) (9f92f94)"
-3. Keep descriptions concise and specific
-4. Order sections by: Bug Fixes, Features, Documentation, Maintenance
-5. Only include sections that have items
-6. NO other sections, NO upgrade notes, NO breaking changes
+1. Output ONLY a flat bullet list - nothing else
+2. Use PRESENT TENSE verbs (Fix, Add, Update, Remove) NOT past tense (Fixed, Added, Updated, Removed)
+3. Consolidate related changes into single entries:
+   - If multiple PRs affect the same component/feature, combine them
+   - If one PR fixes/improves another PR's changes, combine them
+4. Format each line as either:
+   - Single PR: "- {description} (#{number}) ({hash})"
+   - Multiple PRs: "- {combined description} (#{num1}, #{num2}) ({hash1}, {hash2})"
+5. Order by importance: critical fixes first, then features, then docs/maintenance
+6. NO explanations, NO notes, NO headers, NO preamble
+7. Start directly with the first bullet point
 
 PRs included:
 
 ${prSummary}
 
-Remember: Simple list format only. No markdown headers, no emojis.`;
+Output ONLY the bullet list. Nothing before it, nothing after it.`;
 
   try {
     const { text } = await generateText({
       model: anthropic(model),
       prompt,
-      maxTokens: 2000,
       maxRetries: 5,
       abortSignal: AbortSignal.timeout(30000), // 30 second timeout
     });

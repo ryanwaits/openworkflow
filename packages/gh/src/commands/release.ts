@@ -9,7 +9,8 @@ import {
 } from '../utils/version';
 import {
   getCommitsBetweenBranches,
-  getPRDetails
+  getPRDetails,
+  getNewChanges
 } from '../utils/git';
 import type { PRDetails } from '../types';
 import { generateReleaseNotes } from '../utils/ai';
@@ -41,27 +42,17 @@ export const releaseCommand = new Command('release')
       await $`git fetch origin --tags`.quiet();
 
       const targetBranch = options.branch || config.mainBranch || 'main';
-      const remoteTargetBranch = `origin/${targetBranch}`;
-      const lastTag = currentVersion ? formatVersion(currentVersion) : null;
-      let commits = [];
-      let prNumbers = [];
-
-      if (lastTag) {
-        const result = await getCommitsBetweenBranches(lastTag, remoteTargetBranch);
-        commits = result.commits;
-        prNumbers = result.prNumbers;
-      } else {
-        // If no previous release, get all commits
-        const result = await getCommitsBetweenBranches('HEAD~20', remoteTargetBranch);
-        commits = result.commits;
-        prNumbers = result.prNumbers;
-      }
+      const sourceBranch = config.defaultBranch || 'develop';
+      
+      // Get new changes since last release
+      const result = await getNewChanges(`origin/${sourceBranch}`, `origin/${targetBranch}`);
+      const commits = result.commits;
+      const prNumbers = result.prNumbers;
 
       // Exit early if no changes
-      if (commits.length === 0 && lastTag) {
-        console.log(chalk.yellow(`\nℹ️  No changes since ${lastTag}.`));
-        console.log(chalk.dim('\nTip: Merge your release PR first, then create the GitHub release.'));
-        console.log(chalk.dim(`     ow gh pr --release ${versionArg} --create`));
+      if (commits.length === 0) {
+        console.log(chalk.yellow(`\nℹ️  No new changes found between ${sourceBranch} and ${targetBranch}.`));
+        console.log(chalk.dim('\nAll changes in develop have already been merged to main.'));
 
         if (!options.dryRun) {
           const shouldContinue = await confirm(
@@ -85,7 +76,7 @@ export const releaseCommand = new Command('release')
         : parseVersion(versionArg) || { major: 0, minor: 1, patch: 0 };
 
       const newVersionStr = formatVersion(newVersion);
-      
+
       // Fetch PR details and generate release notes
       spinner = ora(`Generating release notes for ${chalk.green(newVersionStr)}...`).start();
       let prs: PRDetails[] = [];
@@ -121,7 +112,7 @@ export const releaseCommand = new Command('release')
         // No PRs found, generate basic notes
         releaseNotes = await generateReleaseNotes([], newVersionStr, currentVersionStr);
       }
-      
+
       spinner.succeed('Generated release notes');
 
       if (options.dryRun) {
@@ -155,7 +146,7 @@ export const releaseCommand = new Command('release')
       if (spinner) {
         spinner.fail('Error occurred');
       }
-      console.error(chalk.red(error.message));
+      console.error(chalk.red(error));
       process.exit(1);
     }
   });

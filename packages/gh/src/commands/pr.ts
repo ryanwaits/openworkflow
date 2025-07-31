@@ -1,7 +1,8 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import ora from 'ora';
-import { getCommitsBetweenBranches, getPRDetails, getCurrentBranch } from '../utils/git';
+import { $ } from 'bun';
+import { getCommitsBetweenBranches, getPRDetails, getCurrentBranch, getNewChanges } from '../utils/git';
 import { generatePRDescription, generateReleasePRDescription } from '../utils/ai';
 import { createReleasePR } from '../utils/github';
 import { copyToClipboard } from '../utils/clipboard';
@@ -39,19 +40,40 @@ export const prCommand = new Command('pr')
         }
       }
       
+      // Always fetch latest from remote
+      spinner.start('Fetching latest changes from remote...');
+      await $`git fetch origin --tags`.quiet();
+      spinner.succeed('Fetched latest from remote');
+      
+      // Show what we're comparing
       spinner.succeed(`Comparing ${chalk.cyan(sourceBranch)} → ${chalk.cyan(targetBranch)}`);
       
-      // Get commits between branches
-      spinner.start('Fetching commits...');
-      const { commits, prNumbers } = await getCommitsBetweenBranches(targetBranch, sourceBranch);
+      // Get new changes between branches
+      spinner.start('Analyzing changes...');
+      
+      let commits, prNumbers;
+      if (options.release) {
+        // For release PRs, use the new approach that handles squash merges
+        const result = await getNewChanges(`origin/${sourceBranch}`, `origin/${targetBranch}`);
+        commits = result.commits;
+        prNumbers = result.prNumbers;
+      } else {
+        // For regular PRs, use the simple approach
+        const result = await getCommitsBetweenBranches(targetBranch, sourceBranch);
+        commits = result.commits;
+        prNumbers = result.prNumbers;
+      }
       
       if (commits.length === 0) {
-        spinner.warn('No changes found between branches');
-        console.log(chalk.yellow(`\nℹ️  No commits found between ${sourceBranch} → ${targetBranch}`));
+        spinner.warn('No new changes found');
+        console.log(chalk.yellow(`\nℹ️  No new changes found between ${sourceBranch} → ${targetBranch}`));
+        if (options.release) {
+          console.log(chalk.dim('All changes in develop have already been merged to main.'));
+        }
         return;
       }
       
-      spinner.succeed(`Found ${chalk.cyan(commits.length)} commits`);
+      spinner.succeed(`Found ${chalk.cyan(commits.length)} new commits`);
       
       // Fetch PR details if available
       let prs: PRDetails[] = [];
